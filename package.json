@@ -1,0 +1,31 @@
+{
+  "name": "minimize-powell",
+  "version": "1.0.0",
+  "description": "Minimize a multivariate function using Powell's Method",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rreusser/minimize-powell.git"
+  },
+  "keywords": [
+    "minimize",
+    "minimization",
+    "optimization",
+    "powell",
+    "scijs"
+  ],
+  "author": "Ricky Reusser",
+  "license": "MIT",
+  "devDependencies": {
+    "almost-equal": "^1.1.0",
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5",
+    "semistandard": "^7.0.5"
+  },
+  "dependencies": {
+    "minimize-golden-section-1d": "^1.0.1"
+  }
+}
