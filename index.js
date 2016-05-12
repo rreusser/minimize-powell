@@ -10,17 +10,14 @@ function powellsMethod (f, x0, options) {
   options = options || {};
   var maxIter = options.maxIter === undefined ? 20 : options.maxIter;
   var tol = options.tolerance === undefined ? 1e-8 : options.tolerance;
+  var tol1d = options.tolerance1d === undefined ? tol : options.tolerance1d;
 
 
   // Dimensionality:
   var n = x0.length;
-  //console.log('n =', n)
-
 
   // Solution vector:
   var p = x0.slice(0);
-  //console.log('p =', p)
-
 
   // Search directions:
   u = [];
@@ -32,6 +29,25 @@ function powellsMethod (f, x0, options) {
     }
   }
 
+  if (!options.computeConstraints) {
+    options.computeConstraints = function (p, ui) {
+      var upper = Infinity;
+      var lower = -Infinity;
+
+      for (var j = 0; j < n; j++) {
+        if (ui[j] !== 0) {
+          if (options.lowerBound) {
+            lower = Math.max(lower, (options.lowerBound - p[j]) / ui[j]);
+          }
+          if (options.upperBound) {
+            upper = Math.min(upper, (options.upperBound - p[j]) / ui[j]);
+          }
+        }
+      }
+
+      return {lowerBound: lower, upperBound: upper};
+    }
+  }
 
   // A function to evaluate:
   pj = [];
@@ -48,7 +64,7 @@ function powellsMethod (f, x0, options) {
     f0 = f(p);
 
     // Reinitialize the search vectors:
-    if (iter % n === 0) {
+    if (iter % (n + 1) === 0) {
       for (i = 0; i < n; i++) {
         u[i] = [];
         for (j = 0; j < n; j++) {
@@ -66,10 +82,17 @@ function powellsMethod (f, x0, options) {
     for (i = 0; i < n; i++) {
       ui = u[i];
 
-      // Minimize using golden section method:
-      tmin = minimize1d(fi, {guess: 0, tolerance: tol})
-      //console.log('tmin =', tmin)
+      // Compute bounds based on starting point p in the
+      // direction ui:
 
+      var constraints = options.computeConstraints(p, ui);
+
+      // Minimize using golden section method:
+      tmin = minimize1d(fi, {
+        lowerBound: constraints.lowerBound,
+        upperBound: constraints.upperBound,
+        tolerance: tol1d
+      });
 
       // Update the solution vector:
       for (j = 0; j < n; j++) {
@@ -92,17 +115,28 @@ function powellsMethod (f, x0, options) {
     }
 
     u.push(un);
-
     // One more minimization, this time along the new direction:
     ui = un;
-    tmin = minimize1d(fi, {guess: 0, tolerance: tol})
+
+    var constraints = options.computeConstraints(p, ui);
+
+    tmin = minimize1d(fi, {
+      lowerBound: constraints.lowerBound,
+      upperBound: constraints.upperBound,
+      tolerance: tol1d
+    });
+
     for (j = 0; j < n; j++) {
       p[j] += tmin * ui[j];
     }
 
     fn = f(p);
 
-    if (Math.abs((f0 - fn) / f0) < tol) {
+    var error = Math.abs((f0 - fn) / f0)
+
+    console.log('Iteration:', iter, ', Error:', error)
+
+    if ( error < tol) {
       break;
     }
   }
