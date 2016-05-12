@@ -27,7 +27,8 @@ describe('minimize', function () {
       minimize(function (x) {
         return 1 + x[0] * x[0] + x[1] * x[1] - 1.9 * x[0] * x[1];
       }, [-20, 25]),
-      [0, 0]
+      [0, 0],
+      almostEqual.FLT_EPSILON * 2
     );
   })
 });
