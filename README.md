@@ -19,7 +19,7 @@ $ npm install minimize-powell
 Minimize [McCormick's function](https://en.wikipedia.org/wiki/Test_functions_for_optimization) with initial guess `[0, 0]` within the region x ∈ [-1.5, 4] and y ∈ [-3, 4]:
 
 ```javascript
-minimize(
+require('minimize-powell')(
   x => Math.sin(x[0] + x[1]) + Math.pow(x[0] - x[1], 2) - 1.5 * x[0] + 2.5 * x[1] + 1,
   [0, 0],
   {bounds: [[-1.5, 4], [-3, 4]]}
