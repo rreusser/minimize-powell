@@ -6,7 +6,7 @@
 
 ## Introduction
 
-Minimizes a function of any number of variables using Powell's method with a full restart ever `n + 1` steps. It's useful, but I wouldn't consider it production ready. Use at your own discretion.
+Minimizes a function of any number of variables using Powell's method with a full restart ever `n + 1` steps. It's useful and tested on a number of wikipedia's [test functions for optimization](https://en.wikipedia.org/wiki/Test_functions_for_optimization), but it's not ready for scientific work.
 
 ## API
 
