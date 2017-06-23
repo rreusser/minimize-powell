@@ -38,7 +38,7 @@ Options:
 - `maxIter` (default: `20`): maximum allowed number of iterations
 - `tolerance` (default: `1e-8`): convergence tolerance
 - `lineTolerance` (default: `tolerance`): 1-d line search tolerance
-- `bounds` (default: `undefined`): variable bounds. Format: `[[x0min, x0max], [x1min, x1max], ...]`. If a set of bounds is not provided a bound is undefined (or +/- Infinity), the bound is not used.
+- `bounds` (default: `undefined`): variable bounds. Format: `[[x0min, x0max], [x1min, x1max], ...]`. If a set of bounds is not provided or a bound is undefined (or +/- Infinity), the bound is not used.
 - `verbose` (default: `false`): print iteration information
 
 ## License
