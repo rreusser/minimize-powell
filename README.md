@@ -6,7 +6,7 @@
 
 ## Introduction
 
-Minimizes a function of any number of variables using Powell's method with a full restart ever `n + 1` steps. It's useful and tested on a number of wikipedia's [test functions for optimization](https://en.wikipedia.org/wiki/Test_functions_for_optimization), but it's not ready for scientific work. It uses a [golden section line search](https://github.com/scijs/minimize-golden-section-1d) so that it's maybe a bit slow but not gradient based. It's useful, but you can do way better if you really need a robust minimizer.
+Minimizes a function of any number of variables using Powell's method with a full restart every `n + 1` steps. It's useful and tested on a number of wikipedia's [test functions for optimization](https://en.wikipedia.org/wiki/Test_functions_for_optimization), but it's not ready for scientific work. It uses a [golden section line search](https://github.com/scijs/minimize-golden-section-1d) so that it's maybe a bit slow but not gradient based. It's useful, but you can do way better if you really need a robust minimizer.
 
 ## Installation
 
