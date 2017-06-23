@@ -10,7 +10,7 @@ function powellsMethod (f, x0, options) {
   options = options || {};
   var maxIter = options.maxIter === undefined ? 20 : options.maxIter;
   var tol = options.tolerance === undefined ? 1e-8 : options.tolerance;
-  var tol1d = options.tolerance1d === undefined ? tol : options.tolerance1d;
+  var tol1d = options.lineTolerance === undefined ? tol : options.lineTolerance;
   var bounds = options.bounds === undefined ? [] : options.bounds;
   var verbose = options.verbose === undefined ? false : options.verbose;
 

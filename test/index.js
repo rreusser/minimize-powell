@@ -139,37 +139,50 @@ test("Booth's function with invalid initial guess", function (t) {
   t.end();
 });
 
-test("Rosenbrock function in 3D", function (t) {
-  assertVectorAlmostEqual(t,
-    minimize(
-      function (x) {
-        return 100 * Math.pow(x[1] - x[0] * x[0], 2) + Math.pow(x[0] - 1, 2) + 100 * Math.pow(x[2] - x[1] * x[1], 2) + Math.pow(x[1] - 1, 2);
-      },
-      [0.5, 0.5, 0.5],
-      {maxIter: 100}
-    ),
-    [1, 1, 1]
-  );
-  t.end();
-});
+for (var n = 0; n < 11; n++) {
+  test('Rosenbrock function in ' + n + 'D', function (t) {
+    assertVectorAlmostEqual(t,
+      minimize(
+        function (x) {
+          var sum = 0;
+          for (var i = 0; i < x.length - 1; i++) {
+            sum += 100 * Math.pow(x[i + 1] - x[i] * x[i], 2) + Math.pow(x[i] - 1, 2);
+          }
+          return sum;
+        },
+        new Array(n).fill(0).map(function (d, i) {return i / 10}),
+        {maxIter: 10 + n * 8}
+      ),
+      new Array(n).fill(0).map(function () {return 1}),
+      1e-4
+    );
+    t.end();
+  });
+}
 
-test("Rosenbrock function in 7D", function (t) {
-  assertVectorAlmostEqual(t,
-    minimize(
-      function (x) {
-        var sum = 0;
-        for (var i = 0; i < x.length - 1; i++) {
-          sum += 100 * Math.pow(x[i + 1] - x[i] * x[i], 2) + Math.pow(x[i] - 1, 2);
+for (var n = 0; n < 11; n++) {
+  test('Rosenbrock function in ' + n + 'D in region [-10, 10]^n', function (t) {
+    assertVectorAlmostEqual(t,
+      minimize(
+        function (x) {
+          var sum = 0;
+          for (var i = 0; i < x.length - 1; i++) {
+            sum += 100 * Math.pow(x[i + 1] - x[i] * x[i], 2) + Math.pow(x[i] - 1, 2);
+          }
+          return sum;
+        },
+        new Array(n).fill(0).map(function (d, i) {return i / 10}),
+        {
+          maxIter: 10 + n * 10,
+          bounds: new Array(n).fill(0).map(function () {return [-10, 10]}),
         }
-        return sum;
-      },
-      [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5],
-      {maxIter: 100}
-    ),
-    [1, 1, 1, 1, 1, 1, 1]
-  );
-  t.end();
-});
+      ),
+      new Array(n).fill(0).map(function () {return 1}),
+      1e-4
+    );
+    t.end();
+  });
+}
 
 
 test("Beale's function", function (t) {
@@ -213,6 +226,21 @@ test("Golstein-Price function", function (t) {
       {bounds: [[-2.5, 2.5], [-2.5, 2.5]]}
     ),
     [0, -1]
+  );
+  t.end();
+});
+
+test('McCormick function', function (t) {
+  assertVectorAlmostEqual(t,
+    minimize(
+      function (x) {
+        return Math.sin(x[0] + x[1]) + Math.pow(x[0] - x[1], 2) - 1.5 * x[0] + 2.5 * x[1] + 1;
+      },
+      [0, 0],
+      {bounds: [[-1.5, 4], [-3, 4]]}
+    ),
+    [-0.54719, -1.54719],
+    1e-5
   );
   t.end();
 });
