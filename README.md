@@ -8,9 +8,15 @@
 
 Minimizes a function of any number of variables using Powell's method with a full restart ever `n + 1` steps. It's useful and tested on a number of wikipedia's [test functions for optimization](https://en.wikipedia.org/wiki/Test_functions_for_optimization), but it's not ready for scientific work.
 
+## Installation
+
+```
+$ npm install minimize-powell
+```
+
 ## API
 
-#### `minimize(f, x0[, options])`
+#### `require('minimize-powell')(f, x0[, options])`
 
 Minimizes a function of `x0.length` variables where `x0` is the initial guess and `f` is a function that takes Array `x` and returns the value of the function to be minimized. On successful completion, returns the argument `x` minimizing `f`.
 
