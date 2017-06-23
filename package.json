@@ -1,6 +1,6 @@
 {
   "name": "minimize-powell",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Minimize a multivariate function using Powell's Method",
   "main": "index.js",
   "scripts": {
