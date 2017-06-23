@@ -152,7 +152,7 @@ for (var n = 0; n < 11; n++) {
         {maxIter: 10 + n * 8}
       ),
       new Array(n).fill(0).map(function () { return 1; }),
-      1e-4
+      1e-3
     );
     t.end();
   });
@@ -176,7 +176,7 @@ for (n = 0; n < 11; n++) {
         }
       ),
       new Array(n).fill(0).map(function () { return 1; }),
-      1e-4
+      1e-3
     );
     t.end();
   });
