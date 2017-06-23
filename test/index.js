@@ -1,8 +1,6 @@
-/* global describe, it */
 'use strict';
 
 var test = require('tape');
-var assert = require('chai').assert;
 var almostEqual = require('almost-equal');
 var minimize = require('../');
 
@@ -12,7 +10,7 @@ function assertAlmostEqual (t, computed, expected, tol) {
     almostEqual(computed, expected, tol, tol),
     'Expected ' + computed + ' to equal ' + expected + ' (±' + tol + ')'
   );
-};
+}
 
 function assertVectorAlmostEqual (t, computed, expected, tol) {
   t.equal(computed.length, expected.length, 'Expected length of computed vector (' + computed.length + ' to equal ' + expected.length + ')');
@@ -20,7 +18,7 @@ function assertVectorAlmostEqual (t, computed, expected, tol) {
   for (var i = 0; i < computed.length; i++) {
     assertAlmostEqual(t, computed[i], expected[i], tol);
   }
-};
+}
 
 test('minimizes x^2 + y^2 - x * y starting at [-20, 25]', function (t) {
   assertVectorAlmostEqual(t,
@@ -35,7 +33,7 @@ test('minimizes x^2 + y^2 - x * y starting at [-20, 25]', function (t) {
 test('minimizes (x + 10)^2 + (y + 10)^2 to [-10, -10]', function (t) {
   assertVectorAlmostEqual(t,
     minimize(
-      function (x) {return Math.pow(x[0] - 10, 2) + Math.pow(x[1] - 10, 2); },
+      function (x) { return Math.pow(x[0] - 10, 2) + Math.pow(x[1] - 10, 2); },
       [0, 0]
     ),
     [10, 10]
@@ -79,7 +77,7 @@ test('minimizes (x - 10)^2 + (y - 10)^2 to [1, 1] for x within [0, 1]', function
   t.end();
 });
 
-test("Rosenbrock function", function (t) {
+test('Rosenbrock function', function (t) {
   assertVectorAlmostEqual(t,
     minimize(
       function (x) {
@@ -95,7 +93,7 @@ test("Rosenbrock function", function (t) {
 test("Booth's function", function (t) {
   assertVectorAlmostEqual(t,
     minimize(
-      function (x) {return Math.pow(x[0] + 2 * x[1] - 7, 2) + Math.pow(2 * x[0] + x[1] - 5, 2);},
+      function (x) { return Math.pow(x[0] + 2 * x[1] - 7, 2) + Math.pow(2 * x[0] + x[1] - 5, 2); },
       [0.5, 0.5]
     ),
     [1, 3]
@@ -106,7 +104,7 @@ test("Booth's function", function (t) {
 test("Booth's function with one-way bounds", function (t) {
   assertVectorAlmostEqual(t,
     minimize(
-      function (x) {return Math.pow(x[0] + 2 * x[1] - 7, 2) + Math.pow(2 * x[0] + x[1] - 5, 2);},
+      function (x) { return Math.pow(x[0] + 2 * x[1] - 7, 2) + Math.pow(2 * x[0] + x[1] - 5, 2); },
       [0, 0],
       {bounds: [[-10, Infinity], [-Infinity, 10]]}
     ),
@@ -118,7 +116,7 @@ test("Booth's function with one-way bounds", function (t) {
 test("Booth's function with two-way bounds", function (t) {
   assertVectorAlmostEqual(t,
     minimize(
-      function (x) {return Math.pow(x[0] + 2 * x[1] - 7, 2) + Math.pow(2 * x[0] + x[1] - 5, 2);},
+      function (x) { return Math.pow(x[0] + 2 * x[1] - 7, 2) + Math.pow(2 * x[0] + x[1] - 5, 2); },
       [0, 0],
       {bounds: [[-10, 10], [-10, 10]]}
     ),
@@ -130,7 +128,7 @@ test("Booth's function with two-way bounds", function (t) {
 test("Booth's function with invalid initial guess", function (t) {
   assertVectorAlmostEqual(t,
     minimize(
-      function (x) {return Math.pow(x[0] + 2 * x[1] - 7, 2) + Math.pow(2 * x[0] + x[1] - 5, 2);},
+      function (x) { return Math.pow(x[0] + 2 * x[1] - 7, 2) + Math.pow(2 * x[0] + x[1] - 5, 2); },
       [100, 100],
       {bounds: [[-10, 10], [-10, 10]]}
     ),
@@ -150,17 +148,17 @@ for (var n = 0; n < 11; n++) {
           }
           return sum;
         },
-        new Array(n).fill(0).map(function (d, i) {return i / 10}),
+        new Array(n).fill(0).map(function (d, i) { return i / 10; }),
         {maxIter: 10 + n * 8}
       ),
-      new Array(n).fill(0).map(function () {return 1}),
+      new Array(n).fill(0).map(function () { return 1; }),
       1e-4
     );
     t.end();
   });
 }
 
-for (var n = 0; n < 11; n++) {
+for (n = 0; n < 11; n++) {
   test('Rosenbrock function in ' + n + 'D in region [-10, 10]^n', function (t) {
     assertVectorAlmostEqual(t,
       minimize(
@@ -171,19 +169,18 @@ for (var n = 0; n < 11; n++) {
           }
           return sum;
         },
-        new Array(n).fill(0).map(function (d, i) {return i / 10}),
+        new Array(n).fill(0).map(function (d, i) { return i / 10; }),
         {
           maxIter: 10 + n * 10,
-          bounds: new Array(n).fill(0).map(function () {return [-10, 10]}),
+          bounds: new Array(n).fill(0).map(function () { return [-10, 10]; })
         }
       ),
-      new Array(n).fill(0).map(function () {return 1}),
+      new Array(n).fill(0).map(function () { return 1; }),
       1e-4
     );
     t.end();
   });
 }
-
 
 test("Beale's function", function (t) {
   assertVectorAlmostEqual(t,
@@ -201,7 +198,7 @@ test("Beale's function", function (t) {
   t.end();
 });
 
-test("Matyas function", function (t) {
+test('Matyas function', function (t) {
   assertVectorAlmostEqual(t,
     minimize(
       function (x) {
@@ -215,7 +212,7 @@ test("Matyas function", function (t) {
   t.end();
 });
 
-test("Golstein-Price function", function (t) {
+test('Golstein-Price function', function (t) {
   assertVectorAlmostEqual(t,
     minimize(
       function (x) {

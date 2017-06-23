@@ -4,7 +4,7 @@
   "description": "Minimize a multivariate function using Powell's Method",
   "main": "index.js",
   "scripts": {
-    "test": "node test/index.js"
+    "test": "semistandard && node test/index.js"
   },
   "repository": {
     "type": "git",
@@ -21,10 +21,16 @@
   "license": "MIT",
   "devDependencies": {
     "almost-equal": "^1.1.0",
-    "semistandard": "^7.0.5",
+    "semistandard": "^11.0.0",
     "tape": "^4.6.3"
   },
   "dependencies": {
     "minimize-golden-section-1d": "^2.0.1"
+  },
+  "semistandard": {
+    "globals": [
+      "describe",
+      "it"
+    ]
   }
 }

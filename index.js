@@ -5,7 +5,7 @@ var minimize1d = require('minimize-golden-section-1d');
 module.exports = powellsMethod;
 
 function powellsMethod (f, x0, options) {
-  var i, j, iter, ui, p, pj, tmin, pj, fi, un, u, p0, sum, fn, dx, tol, err, perr, du;
+  var i, j, iter, ui, tmin, pj, fi, un, u, p0, sum, dx, err, perr, du, tlimit;
 
   options = options || {};
   var maxIter = options.maxIter === undefined ? 20 : options.maxIter;
@@ -29,8 +29,8 @@ function powellsMethod (f, x0, options) {
     }
   }
 
-  var bound = options.bounds ? (
-    function (p, ui) {
+  var bound = options.bounds
+    ? function (p, ui) {
       var upper = Infinity;
       var lower = -Infinity;
 
@@ -51,11 +51,9 @@ function powellsMethod (f, x0, options) {
 
       return [lower, upper];
     }
-  ) : (
-    function () {
+    : function () {
       return [-Infinity, Infinity];
-    }
-  );
+    };
 
   // A function to evaluate:
   pj = [];
@@ -94,7 +92,7 @@ function powellsMethod (f, x0, options) {
       // Compute bounds based on starting point p in the
       // direction ui:
 
-      var tlimit = bound(p, ui);
+      tlimit = bound(p, ui);
 
       // Minimize using golden section method:
       dx = Math.abs(tprev * 2);
@@ -144,7 +142,7 @@ function powellsMethod (f, x0, options) {
     // One more minimization, this time along the new direction:
     ui = un;
 
-    var tlimit = bound(p, ui);
+    tlimit = bound(p, ui);
 
     dx = Math.abs(tprev * 2);
 
@@ -161,7 +159,7 @@ function powellsMethod (f, x0, options) {
       return p;
     }
 
-    var err = 0;
+    err = 0;
     for (j = 0; j < n; j++) {
       du = tmin * ui[j];
       err += du * du;
@@ -170,7 +168,7 @@ function powellsMethod (f, x0, options) {
 
     err = Math.sqrt(err);
 
-    if (verbose) console.log('Iteration ' + iter + ': ' + (err / perr) +  ' f(' + p + ') = ' + f(p));
+    if (verbose) console.log('Iteration ' + iter + ': ' + (err / perr) + ' f(' + p + ') = ' + f(p));
 
     if (err / perr < tol) return p;
 
@@ -178,4 +176,4 @@ function powellsMethod (f, x0, options) {
   }
 
   return p;
-};
+}
