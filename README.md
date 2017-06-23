@@ -16,7 +16,7 @@ $ npm install minimize-powell
 
 ## Usage
 
-Minimize McCormick's function with initial guess `[0, 0]` within the region x ∈ [-1.5, 4] and y ∈ [-3, 4]:
+Minimize [McCormick's function](https://en.wikipedia.org/wiki/Test_functions_for_optimization) with initial guess `[0, 0]` within the region x ∈ [-1.5, 4] and y ∈ [-3, 4]:
 
 ```javascript
 minimize(
