@@ -5,17 +5,17 @@ var minimize1d = require('minimize-golden-section-1d');
 module.exports = powellsMethod;
 
 function powellsMethod (f, x0, options) {
-  var i, j, iter, ui, p, pj, tmin, pj, fi, un, u, p0, sum, f0, fn;
+  var i, j, iter, ui, p, pj, tmin, pj, fi, un, u, p0, sum, fn, dx, tol, err, perr, du;
 
   options = options || {};
   var maxIter = options.maxIter === undefined ? 20 : options.maxIter;
   var tol = options.tolerance === undefined ? 1e-8 : options.tolerance;
   var tol1d = options.tolerance1d === undefined ? tol : options.tolerance1d;
-
+  var bounds = options.bounds === undefined ? [] : options.bounds;
+  var verbose = options.verbose === undefined ? false : options.verbose;
 
   // Dimensionality:
   var n = x0.length;
-
   // Solution vector:
   var p = x0.slice(0);
 
@@ -29,25 +29,33 @@ function powellsMethod (f, x0, options) {
     }
   }
 
-  if (!options.computeConstraints) {
-    options.computeConstraints = function (p, ui) {
+  var bound = options.bounds ? (
+    function (p, ui) {
       var upper = Infinity;
       var lower = -Infinity;
 
       for (var j = 0; j < n; j++) {
+        var jbounds = bounds[j];
+        if (!jbounds) continue;
+
         if (ui[j] !== 0) {
-          if (options.lowerBound) {
-            lower = Math.max(lower, (options.lowerBound - p[j]) / ui[j]);
+          if (jbounds[0] !== undefined && isFinite(jbounds[0])) {
+            lower = (ui[j] > 0 ? Math.max : Math.min)(lower, (jbounds[0] - p[j]) / ui[j]);
           }
-          if (options.upperBound) {
-            upper = Math.min(upper, (options.upperBound - p[j]) / ui[j]);
+
+          if (jbounds[1] !== undefined && isFinite(jbounds[1])) {
+            upper = (ui[j] > 0 ? Math.min : Math.max)(upper, (jbounds[1] - p[j]) / ui[j]);
           }
         }
       }
 
-      return {lowerBound: lower, upperBound: upper};
+      return [lower, upper];
     }
-  }
+  ) : (
+    function () {
+      return [-Infinity, Infinity];
+    }
+  );
 
   // A function to evaluate:
   pj = [];
@@ -59,10 +67,11 @@ function powellsMethod (f, x0, options) {
     return f(pj);
   };
 
-  iter = 0;
-  while (++iter < maxIter) {
-    f0 = f(p);
+  var tprev = 1;
 
+  iter = 0;
+  perr = 0;
+  while (++iter < maxIter) {
     // Reinitialize the search vectors:
     if (iter % (n + 1) === 0) {
       for (i = 0; i < n; i++) {
@@ -85,19 +94,28 @@ function powellsMethod (f, x0, options) {
       // Compute bounds based on starting point p in the
       // direction ui:
 
-      var constraints = options.computeConstraints(p, ui);
+      var tlimit = bound(p, ui);
 
       // Minimize using golden section method:
+      dx = Math.abs(tprev * 2);
+
       tmin = minimize1d(fi, {
-        lowerBound: constraints.lowerBound,
-        upperBound: constraints.upperBound,
-        tolerance: tol1d
+        lowerBound: tlimit[0],
+        upperBound: tlimit[1],
+        initialIncrement: dx,
+        tolerance: dx * tol1d
       });
+
+      if (tmin === 0) {
+        return p;
+      }
 
       // Update the solution vector:
       for (j = 0; j < n; j++) {
         p[j] += tmin * ui[j];
       }
+
+      tprev = tmin;
     }
 
     // Throw out the first search direction:
@@ -110,35 +128,53 @@ function powellsMethod (f, x0, options) {
     }
     // Normalize:
     sum = Math.sqrt(sum);
-    for (j = 0; j < n; j++) {
-      un[j] /= sum;
+
+    if (sum > 0) {
+      for (j = 0; j < n; j++) {
+        un[j] /= sum;
+      }
+    } else {
+      // Exactly nothing moved, so it it appears we've converged. In particular,
+      // it's possible the solution is up against a boundary and simply can't
+      // move farther.
+      return p;
     }
 
     u.push(un);
     // One more minimization, this time along the new direction:
     ui = un;
 
-    var constraints = options.computeConstraints(p, ui);
+    var tlimit = bound(p, ui);
+
+    dx = Math.abs(tprev * 2);
 
     tmin = minimize1d(fi, {
-      lowerBound: constraints.lowerBound,
-      upperBound: constraints.upperBound,
-      tolerance: tol1d
+      lowerBound: tlimit[0],
+      upperBound: tlimit[1],
+      initialIncrement: dx,
+      tolerance: dx * tol1d
     });
 
+    tprev = tmin;
+
+    if (tmin === 0) {
+      return p;
+    }
+
+    var err = 0;
     for (j = 0; j < n; j++) {
-      p[j] += tmin * ui[j];
+      du = tmin * ui[j];
+      err += du * du;
+      p[j] += du;
     }
 
-    fn = f(p);
+    err = Math.sqrt(err);
 
-    var error = Math.abs((f0 - fn) / f0)
+    if (verbose) console.log('Iteration ' + iter + ': ' + (err / perr) +  ' f(' + p + ') = ' + f(p));
 
-    console.log('Iteration:', iter, ', Error:', error)
+    if (err / perr < tol) return p;
 
-    if ( error < tol) {
-      break;
-    }
+    perr = err;
   }
 
   return p;

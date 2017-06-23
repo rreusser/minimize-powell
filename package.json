@@ -23,7 +23,8 @@
     "almost-equal": "^1.1.0",
     "chai": "^3.5.0",
     "mocha": "^2.4.5",
-    "semistandard": "^7.0.5"
+    "semistandard": "^7.0.5",
+    "tape": "^4.6.3"
   },
   "dependencies": {
     "minimize-golden-section-1d": "^1.0.1"
