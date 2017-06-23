@@ -14,6 +14,19 @@ Minimizes a function of any number of variables using Powell's method with a ful
 $ npm install minimize-powell
 ```
 
+## Usage
+
+Minimize McCormick's function with initial guess `[0, 0]` within the region x ∈ [-1.5, 4] and y ∈ [-3, 4]:
+
+```javascript
+minimize(
+  x => Math.sin(x[0] + x[1]) + Math.pow(x[0] - x[1], 2) - 1.5 * x[0] + 2.5 * x[1] + 1,
+  [0, 0],
+  {bounds: [[-1.5, 4], [-3, 4]]}
+)
+// => [ -0.5471975614863934, -1.547197546832775 ]
+```
+
 ## API
 
 #### `require('minimize-powell')(f, x0[, options])`
