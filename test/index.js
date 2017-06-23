@@ -4,6 +4,8 @@ var test = require('tape');
 var almostEqual = require('almost-equal');
 var minimize = require('../');
 
+var i, j, k, n, sum, x0;
+
 function assertAlmostEqual (t, computed, expected, tol) {
   tol = tol === undefined ? almostEqual.FLT_EPSILON * 2 : tol;
   t.ok(
@@ -15,7 +17,7 @@ function assertAlmostEqual (t, computed, expected, tol) {
 function assertVectorAlmostEqual (t, computed, expected, tol) {
   t.equal(computed.length, expected.length, 'Expected length of computed vector (' + computed.length + ' to equal ' + expected.length + ')');
 
-  for (var i = 0; i < computed.length; i++) {
+  for (i = 0; i < computed.length; i++) {
     assertAlmostEqual(t, computed[i], expected[i], tol);
   }
 }
@@ -137,13 +139,13 @@ test("Booth's function with invalid initial guess", function (t) {
   t.end();
 });
 
-for (var n = 0; n < 11; n++) {
+for (n = 0; n < 11; n++) {
   test('Rosenbrock function in ' + n + 'D', function (t) {
     assertVectorAlmostEqual(t,
       minimize(
         function (x) {
-          var sum = 0;
-          for (var i = 0; i < x.length - 1; i++) {
+          sum = 0;
+          for (i = 0; i < x.length - 1; i++) {
             sum += 100 * Math.pow(x[i + 1] - x[i] * x[i], 2) + Math.pow(x[i] - 1, 2);
           }
           return sum;
@@ -163,8 +165,8 @@ for (n = 0; n < 11; n++) {
     assertVectorAlmostEqual(t,
       minimize(
         function (x) {
-          var sum = 0;
-          for (var i = 0; i < x.length - 1; i++) {
+          sum = 0;
+          for (i = 0; i < x.length - 1; i++) {
             sum += 100 * Math.pow(x[i + 1] - x[i] * x[i], 2) + Math.pow(x[i] - 1, 2);
           }
           return sum;
@@ -241,3 +243,46 @@ test('McCormick function', function (t) {
   );
   t.end();
 });
+
+for (i = -3; i <= 3; i++) {
+  for (j = -3; j <= 3; j++) {
+    for (k = -3; k <= 3; k++) {
+      x0 = [i / 2, j / 2, k / 2];
+      test('3D paraboloid starting from ' + x0 + ' in [-1, 1] x [-1, 1] x [-1, 1]', function (t) {
+        assertVectorAlmostEqual(t,
+          minimize(
+            function (x) { return x[0] * x[0] + x[1] * x[1] + x[2] * x[2]; },
+            x0,
+            {
+              bounds: [[-1, 1], [-1, 1], [-1, 1]],
+              maxIter: 10
+            }
+          ),
+          [0, 0, 0],
+          1e-15
+        );
+        t.end();
+      });
+    }
+  }
+}
+
+for (i = -3; i <= 3; i++) {
+  for (j = -3; j <= 3; j++) {
+    for (k = -3; k <= 3; k++) {
+      x0 = [i / 2, j / 2, k / 2];
+      test('3D paraboloid starting from ' + x0 + ' without bounds', function (t) {
+        assertVectorAlmostEqual(t,
+          minimize(
+            function (x) { return x[0] * x[0] + x[1] * x[1] + x[2] * x[2]; },
+            x0,
+            {maxIter: 10}
+          ),
+          [0, 0, 0],
+          1e-15
+        );
+        t.end();
+      });
+    }
+  }
+}

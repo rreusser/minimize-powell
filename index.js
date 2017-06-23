@@ -29,6 +29,18 @@ function powellsMethod (f, x0, options) {
     }
   }
 
+  // Bound the input:
+  for (i = 0; i < bounds.length; i++) {
+    var ibounds = bounds[i];
+    if (!ibounds) continue;
+    if (isFinite(ibounds[0])) {
+      p[i] = Math.max(ibounds[0], p[i]);
+    }
+    if (isFinite(ibounds[1])) {
+      p[i] = Math.min(ibounds[1], p[i]);
+    }
+  }
+
   var bound = options.bounds
     ? function (p, ui) {
       var upper = Infinity;
