@@ -1,8 +1,8 @@
 # minimize-powell
 
-<!--[![Build Status][travis-image]][travis-url] [![npm version][npm-image]][npm-url]  [![Dependency Status][david-image]][david-url] [![js-semistandard-style](https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg?style=flat-square)](https://github.com/Flet/semistandard)-->
+[![Build Status][travis-image]][travis-url] [![npm version][npm-image]][npm-url]  [![Dependency Status][david-image]][david-url] [![js-semistandard-style](https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg?style=flat-square)](https://github.com/Flet/semistandard)
 
-> Minimize a multivariate function using Powell's Method
+> Minimize a multivariate function using [Powell's Method](https://en.wikipedia.org/wiki/Powell%27s_method)
 
 ## Introduction
 
@@ -23,4 +23,11 @@ Options:
 - `verbose` (default: `false`): print iteration information
 
 ## License
-&copy; 2016 Ricky Reusser. MIT License.
+&copy; 2017 Ricky Reusser. MIT License.
+
+[travis-image]: https://travis-ci.org/rreusser/minimize-powell.svg?branch=master
+[travis-url]: https://travis-ci.org/rreusser/minimize-powell
+[npm-image]: https://badge.fury.io/js/minimize-powell.svg
+[npm-url]: http://badge.fury.io/js/minimize-powell
+[david-image]: https://david-dm.org/rreusser/minimize-powell.svg
+[david-url]: https://david-dm.org/rreusser/minimize-powell
