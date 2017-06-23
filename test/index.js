@@ -244,6 +244,23 @@ test('McCormick function', function (t) {
   t.end();
 });
 
+// Fails because the line search doesn't successfully locate the sharp edges with
+// a good enough tolerance. It just assumes it's found a min and doesn't resolve
+// it well enough to march in the right direction.
+/* test('Bukin function No. 6', function (t) {
+  assertVectorAlmostEqual(t,
+    minimize(
+      function (x) {
+        return 100 + Math.sqrt(Math.abs(x[1] - 0.01 * x[0] * x[0])) + 0.01 * Math.abs(x[0] + 10);
+      },
+      [-7, 0],
+      {bounds: [[-15, -5], [-3, 3]]}
+    ),
+    [-10, 1]
+  );
+  t.end();
+}); */
+
 for (i = -3; i <= 3; i++) {
   for (j = -3; j <= 3; j++) {
     for (k = -3; k <= 3; k++) {
