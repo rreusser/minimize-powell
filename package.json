@@ -4,6 +4,8 @@
   "description": "Minimize a multivariate function using Powell's Method",
   "main": "index.js",
   "scripts": {
+    "lint": "semistandard",
+    "lint-fix": "semistandard --fix",
     "test": "semistandard && node test/index.js"
   },
   "repository": {

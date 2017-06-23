@@ -261,6 +261,20 @@ test('McCormick function', function (t) {
   t.end();
 }); */
 
+test('Three hump camel function', function (t) {
+  assertVectorAlmostEqual(t,
+    minimize(
+      function (x) {
+        return 2 * x[0] * x[0] - 1.05 * Math.pow(x[0], 4) + Math.pow(x[0], 6) / 6 + x[0] * x[1] + x[1] * x[1];
+      },
+      [1, 1],
+      {bounds: [[-5, 5], [-5, 5]]}
+    ),
+    [0, 0]
+  );
+  t.end();
+});
+
 for (i = -3; i <= 3; i++) {
   for (j = -3; j <= 3; j++) {
     for (k = -3; k <= 3; k++) {
