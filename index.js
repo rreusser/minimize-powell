@@ -4,7 +4,7 @@ var minimize1d = require('minimize-golden-section-1d');
 
 module.exports = powellsMethod;
 
-function powellsMethod (f, x0, options) {
+function powellsMethod (f, x0, options, status) {
   var i, j, iter, ui, tmin, pj, fi, un, u, p0, sum, dx, err, perr, du, tlimit;
 
   options = options || {};
@@ -13,6 +13,8 @@ function powellsMethod (f, x0, options) {
   var tol1d = options.lineTolerance === undefined ? tol : options.lineTolerance;
   var bounds = options.bounds === undefined ? [] : options.bounds;
   var verbose = options.verbose === undefined ? false : options.verbose;
+
+  if (status) status.points = [];
 
   // Dimensionality:
   var n = x0.length;
@@ -30,16 +32,22 @@ function powellsMethod (f, x0, options) {
   }
 
   // Bound the input:
-  for (i = 0; i < bounds.length; i++) {
-    var ibounds = bounds[i];
-    if (!ibounds) continue;
-    if (isFinite(ibounds[0])) {
-      p[i] = Math.max(ibounds[0], p[i]);
-    }
-    if (isFinite(ibounds[1])) {
-      p[i] = Math.min(ibounds[1], p[i]);
+  function constrain (x) {
+    for (var i = 0; i < bounds.length; i++) {
+      var ibounds = bounds[i];
+      if (!ibounds) continue;
+      if (isFinite(ibounds[0])) {
+        x[i] = Math.max(ibounds[0], x[i]);
+      }
+      if (isFinite(ibounds[1])) {
+        x[i] = Math.min(ibounds[1], x[i]);
+      }
     }
   }
+
+  constrain(p);
+
+  if (status) status.points.push(p.slice());
 
   var bound = options.bounds
     ? function (p, ui) {
@@ -77,13 +85,11 @@ function powellsMethod (f, x0, options) {
     return f(pj);
   };
 
-  var tprev = 1;
-
   iter = 0;
   perr = 0;
   while (++iter < maxIter) {
     // Reinitialize the search vectors:
-    if (iter % (n + 1) === 0) {
+    if (iter % (n) === 0) {
       for (i = 0; i < n; i++) {
         u[i] = [];
         for (j = 0; j < n; j++) {
@@ -107,7 +113,7 @@ function powellsMethod (f, x0, options) {
       tlimit = bound(p, ui);
 
       // Minimize using golden section method:
-      dx = Math.abs(tprev * 2);
+      dx = 0.1;
 
       tmin = minimize1d(fi, {
         lowerBound: tlimit[0],
@@ -125,7 +131,9 @@ function powellsMethod (f, x0, options) {
         p[j] += tmin * ui[j];
       }
 
-      tprev = tmin;
+      constrain(p);
+
+      if (status) status.points.push(p.slice());
     }
 
     // Throw out the first search direction:
@@ -156,7 +164,7 @@ function powellsMethod (f, x0, options) {
 
     tlimit = bound(p, ui);
 
-    dx = Math.abs(tprev * 2);
+    dx = 0.1;
 
     tmin = minimize1d(fi, {
       lowerBound: tlimit[0],
@@ -164,8 +172,6 @@ function powellsMethod (f, x0, options) {
       initialIncrement: dx,
       tolerance: dx * tol1d
     });
-
-    tprev = tmin;
 
     if (tmin === 0) {
       return p;
@@ -177,6 +183,10 @@ function powellsMethod (f, x0, options) {
       err += du * du;
       p[j] += du;
     }
+
+    constrain(p);
+
+    if (status) status.points.push(p.slice());
 
     err = Math.sqrt(err);
 
